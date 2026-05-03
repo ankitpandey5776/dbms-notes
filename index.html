@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DBMS Complete Guide — Made Simple</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+
+  :root {
+    --bg: #0f0f13;
+    --surface: #16161d;
+    --surface2: #1e1e28;
+    --border: #2a2a38;
+    --accent: #7c6ef7;
+    --accent2: #f7a04a;
+    --accent3: #4af7b8;
+    --accent4: #f74a7c;
+    --text: #e8e6f0;
+    --muted: #8a8899;
+    --tag-bg: #252535;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lora', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0f0f13 0%, #1a1428 50%, #0f1318 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(124,110,247,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #c4bfff 0%, #7c6ef7 40%, #f7a04a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  header p {
+    font-family: 'Syne', sans-serif;
+    color: var(--muted);
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+  }
+  .badge-row {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px;
+  }
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+    letter-spacing: 0.5px;
+  }
+  .badge.purple { border-color: #7c6ef7; color: #a99fff; background: rgba(124,110,247,0.08); }
+  .badge.orange { border-color: #f7a04a; color: #f7c48a; background: rgba(247,160,74,0.08); }
+  .badge.green  { border-color: #4af7b8; color: #8affd8; background: rgba(74,247,184,0.08); }
+  .badge.pink   { border-color: #f74a7c; color: #ff8aac; background: rgba(247,74,124,0.08); }
+
+  /* LAYOUT */
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* TOC */
+  .toc-wrapper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 48px;
+  }
+  .toc-wrapper h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 6px 16px;
+  }
+  .toc-grid a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 3px 0;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .toc-grid a:hover { color: var(--accent); border-color: var(--accent); }
+  .toc-grid a span { color: var(--accent2); margin-right: 6px; }
+
+  /* SECTION DIVIDERS */
+  .section-chapter {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--accent2);
+    margin: 52px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-chapter::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+  }
+
+  /* TOPIC CARD */
+  .topic {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .topic:hover { border-color: rgba(124,110,247,0.4); }
+
+  .topic-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 22px 26px 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .topic-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    background: rgba(124,110,247,0.1);
+    border: 1px solid rgba(124,110,247,0.25);
+    border-radius: 8px;
+    padding: 4px 10px;
+    min-width: 44px;
+    text-align: center;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .topic-num.orange { color: var(--accent2); background: rgba(247,160,74,0.1); border-color: rgba(247,160,74,0.25); }
+  .topic-num.green  { color: var(--accent3); background: rgba(74,247,184,0.1); border-color: rgba(74,247,184,0.25); }
+  .topic-num.pink   { color: var(--accent4); background: rgba(247,74,124,0.1); border-color: rgba(247,74,124,0.25); }
+
+  .topic-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+    line-height: 1.4;
+  }
+  .topic-arrow {
+    font-size: 1rem;
+    color: var(--muted);
+    transition: transform 0.3s;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+  .topic.open .topic-arrow { transform: rotate(90deg); }
+
+  .topic-body {
+    display: none;
+    padding: 0 26px 26px 26px;
+    border-top: 1px solid var(--border);
+  }
+  .topic.open .topic-body { display: block; }
+
+  .topic-body p {
+    margin-top: 16px;
+    color: #ccc8dc;
+    font-size: 0.97rem;
+  }
+  .topic-body h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 22px;
+    margin-bottom: 8px;
+  }
+  .topic-body h4.orange { color: var(--accent2); }
+  .topic-body h4.green  { color: var(--accent3); }
+  .topic-body h4.pink   { color: var(--accent4); }
+
+  /* ANALOGY BOX */
+  .analogy {
+    background: rgba(124,110,247,0.07);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin-top: 16px;
+    font-style: italic;
+    color: #b8b4d8;
+    font-size: 0.93rem;
+  }
+  .analogy::before { content: '💡 '; font-style: normal; }
+  .analogy.orange { border-color: var(--accent2); background: rgba(247,160,74,0.07); }
+  .analogy.green  { border-color: var(--accent3); background: rgba(74,247,184,0.07); }
+  .analogy.pink   { border-color: var(--accent4); background: rgba(247,74,124,0.07); }
+
+  /* CODE */
+  pre {
+    background: #0c0c14;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    margin-top: 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: #b8f7d8;
+  }
+  code {
+    font-family: 'DM Mono', monospace;
+    background: var(--tag-bg);
+    color: #f7c48a;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 0.85em;
+  }
+
+  /* TABLE */
+  .t-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 0.88rem;
+  }
+  .t-table th {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+    background: var(--surface2);
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .t-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(42,42,56,0.6);
+    vertical-align: top;
+    color: #c8c4d8;
+  }
+  .t-table tr:last-child td { border-bottom: none; }
+  .t-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* TAGS */
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: var(--tag-bg);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .tag.accent { background: rgba(124,110,247,0.12); color: #a99fff; border-color: rgba(124,110,247,0.3); }
+  .tag.green  { background: rgba(74,247,184,0.1); color: #8affd8; border-color: rgba(74,247,184,0.3); }
+  .tag.orange { background: rgba(247,160,74,0.1); color: #f7c48a; border-color: rgba(247,160,74,0.3); }
+  .tag.pink   { background: rgba(247,74,124,0.1); color: #ff8aac; border-color: rgba(247,74,124,0.3); }
+
+  ul.points { padding-left: 0; list-style: none; margin-top: 12px; }
+  ul.points li {
+    padding: 6px 0 6px 22px;
+    position: relative;
+    color: #c8c4d8;
+    font-size: 0.95rem;
+  }
+  ul.points li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--accent);
+    font-weight: bold;
+  }
+  ul.points li.orange::before { color: var(--accent2); }
+  ul.points li.green::before  { color: var(--accent3); }
+  ul.points li.pink::before   { color: var(--accent4); }
+
+  strong { color: var(--text); font-weight: 600; }
+
+  .key-point {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 14px;
+    font-size: 0.9rem;
+    color: #c8c4d8;
+  }
+
+  /* Expand All Button */
+  .ctrl-bar {
+    display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 16px;
+  }
+  .ctrl-btn {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .ctrl-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  footer {
+    text-align: center;
+    padding: 32px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>DBMS — Complete Study Guide</h1>
+  <p>All 54 Must-Know Topics · Explained Simply · Like You're 15</p>
+  <div class="badge-row">
+    <span class="badge purple">54 Topics</span>
+    <span class="badge orange">SQL & NoSQL</span>
+    <span class="badge green">Normalization</span>
+    <span class="badge pink">Transactions & Locking</span>
+    <span class="badge purple">B+ Trees & Indexing</span>
+    <span class="badge orange">ACID · CAP · OLAP</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- TOC -->
+  <div class="toc-wrapper">
+    <h2>📋 Quick Navigation</h2>
+    <div class="toc-grid">
+      <a href="#t1"><span>01</span>Data vs Info vs DB</a>
+      <a href="#t2"><span>02</span>DBMS vs File System</a>
+      <a href="#t3"><span>03</span>Types of DBMS</a>
+      <a href="#t4"><span>04</span>3-Tier Architecture</a>
+      <a href="#t5"><span>05</span>Schema vs Instance</a>
+      <a href="#t6"><span>06</span>Data Independence</a>
+      <a href="#t7"><span>07</span>ER Model</a>
+      <a href="#t8"><span>08</span>Entity, Attribute, Relationship</a>
+      <a href="#t9"><span>09</span>Strong vs Weak Entity</a>
+      <a href="#t10"><span>10</span>Cardinality & Participation</a>
+      <a href="#t11"><span>11</span>ER to Relational Mapping</a>
+      <a href="#t12"><span>12</span>Relational Model</a>
+      <a href="#t13"><span>13</span>Keys</a>
+      <a href="#t14"><span>14</span>Relational Algebra</a>
+      <a href="#t15"><span>15</span>SQL — DDL/DML/DCL/TCL</a>
+      <a href="#t16"><span>16</span>SQL Queries</a>
+      <a href="#t17"><span>17</span>Joins</a>
+      <a href="#t18"><span>18</span>Subqueries</a>
+      <a href="#t19"><span>19</span>Correlated Subqueries</a>
+      <a href="#t20"><span>20</span>Aggregate Functions</a>
+      <a href="#t21"><span>21</span>NULL Handling</a>
+      <a href="#t22"><span>22</span>Views</a>
+      <a href="#t23"><span>23</span>Stored Procedures</a>
+      <a href="#t24"><span>24</span>Triggers</a>
+      <a href="#t25"><span>25</span>Indexes</a>
+      <a href="#t26"><span>26</span>B-Tree & B+ Tree</a>
+      <a href="#t27"><span>27</span>Functional Dependency</a>
+      <a href="#t28"><span>28</span>Armstrong's Axioms</a>
+      <a href="#t29"><span>29</span>Closure of Attribute Set</a>
+      <a href="#t30"><span>30</span>Candidate Key Finding</a>
+      <a href="#t31"><span>31</span>Normalization 1NF–BCNF</a>
+      <a href="#t32"><span>32</span>Partial Dependency</a>
+      <a href="#t33"><span>33</span>Transitive Dependency</a>
+      <a href="#t34"><span>34</span>Multivalued Dep & 4NF</a>
+      <a href="#t35"><span>35</span>Lossless & Dep-Preserving</a>
+      <a href="#t36"><span>36</span>Transactions</a>
+      <a href="#t37"><span>37</span>ACID Properties</a>
+      <a href="#t38"><span>38</span>Transaction States</a>
+      <a href="#t39"><span>39</span>Concurrency Control</a>
+      <a href="#t40"><span>40</span>Serializability</a>
+      <a href="#t41"><span>41</span>Precedence Graph</a>
+      <a href="#t42"><span>42</span>Locking</a>
+      <a href="#t43"><span>43</span>Two-Phase Locking</a>
+      <a href="#t44"><span>44</span>Deadlock</a>
+      <a href="#t45"><span>45</span>Timestamp Protocols</a>
+      <a href="#t46"><span>46</span>Recovery</a>
+      <a href="#t47"><span>47</span>Rollback & Undo/Redo</a>
+      <a href="#t48"><span>48</span>Hashing</a>
+      <a href="#t49"><span>49</span>File Organization</a>
+      <a href="#t50"><span>50</span>Relational vs NoSQL</a>
+      <a href="#t51"><span>51</span>CAP Theorem</a>
+      <a href="#t52"><span>52</span>Denormalization</a>
+      <a href="#t53"><span>53</span>Query Optimization</a>
+      <a href="#t54"><span>54</span>Cost Estimation</a>
+    </div>
+  </div>
+
+  <div class="ctrl-bar">
+    <button class="ctrl-btn" onclick="toggleAll(true)">Expand All</button>
+    <button class="ctrl-btn" onclick="toggleAll(false)">Collapse All</button>
+  </div>
+
+  <!-- ═══════════════════════════════ CHAPTER 1 ═══════════════════════════════ -->
+  <div class="section-chapter">Chapter 1 — Foundations</div>
+
+  <!-- T1 -->
+  <div class="topic" id="t1">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">01</span>
+      <span class="topic-title">Data vs Information vs Database</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Data</strong> is raw facts — just numbers, words, or symbols with no meaning by themselves. <strong>Information</strong> is when you give data meaning and context. A <strong>Database</strong> is an organised collection of data stored so it can be accessed, managed, and updated easily.</p>
+      <div class="analogy">Think of a school: "85, 90, 78" is just <em>data</em>. "Rahul scored 85 in Maths, 90 in Science, 78 in English" is <em>information</em>. The school's complete marks record of all students, stored in a system — that's a <em>database</em>.</div>
+      <table class="t-table">
+        <tr><th>Concept</th><th>Definition</th><th>Example</th></tr>
+        <tr><td>Data</td><td>Raw, unprocessed facts</td><td>42, "John", 2006-01-15</td></tr>
+        <tr><td>Information</td><td>Processed data with meaning</td><td>"John is 18 years old, born Jan 15"</td></tr>
+        <tr><td>Database</td><td>Organised collection of related data</td><td>School's student records system</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- T2 -->
+  <div class="topic" id="t2">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">02</span>
+      <span class="topic-title">DBMS vs File System</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>File System</strong> is the old-school way of storing data — just files on your computer like .txt or .csv. A <strong>DBMS (Database Management System)</strong> is software that makes storing, retrieving, and managing data much smarter, safer, and easier.</p>
+      <div class="analogy">File System = keeping all your notes as loose papers stuffed in a drawer. DBMS = a well-organised filing cabinet with labeled folders, where you can find anything in seconds, and two people can access different files at the same time without messing things up.</div>
+      <table class="t-table">
+        <tr><th>Feature</th><th>File System</th><th>DBMS</th></tr>
+        <tr><td>Data Redundancy</td><td>High (same data in many files)</td><td>Controlled / Minimal</td></tr>
+        <tr><td>Data Inconsistency</td><td>Common problem</td><td>Managed automatically</td></tr>
+        <tr><td>Security</td><td>Very basic (file permissions)</td><td>Role-based, fine-grained</td></tr>
+        <tr><td>Concurrent Access</td><td>Poor support</td><td>Excellent (locking, transactions)</td></tr>
+        <tr><td>Backup & Recovery</td><td>Manual</td><td>Built-in</td></tr>
+        <tr><td>Query Support</td><td>None (must write code)</td><td>SQL queries</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- T3 -->
+  <div class="topic" id="t3">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">03</span>
+      <span class="topic-title">Types of DBMS</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>There are four classic types of DBMS, each organising data differently:</p>
+      <table class="t-table">
+        <tr><th>Type</th><th>How it stores data</th><th>Example</th></tr>
+        <tr><td><strong>Relational (RDBMS)</strong></td><td>Tables with rows & columns — most common today</td><td>MySQL, PostgreSQL, Oracle</td></tr>
+        <tr><td><strong>Hierarchical</strong></td><td>Tree structure (parent → children), like a family tree</td><td>IBM IMS</td></tr>
+        <tr><td><strong>Network</strong></td><td>Graph structure — each child can have multiple parents</td><td>IDMS</td></tr>
+        <tr><td><strong>Object-Oriented</strong></td><td>Data stored as objects (like in OOP programming)</td><td>db4o, ObjectDB</td></tr>
+      </table>
+      <h4>Also Important: NoSQL DBMS</h4>
+      <p>Modern systems also use <strong>NoSQL</strong> databases — not just tables! These handle huge, flexible data like social media posts, images, or chat messages.</p>
+      <div class="tag-row">
+        <span class="tag green">Document (MongoDB)</span>
+        <span class="tag green">Key-Value (Redis)</span>
+        <span class="tag green">Column-family (Cassandra)</span>
+        <span class="tag green">Graph (Neo4j)</span>
+      </div>
+      <h4 class="orange">OLAP vs OLTP</h4>
+      <p><strong>OLTP</strong> (Online Transaction Processing) = day-to-day operations like booking a ticket, placing an order. Fast, many small transactions.<br><strong>OLAP</strong> (Online Analytical Processing) = analysing huge amounts of historical data — like "what were our total sales in Q3?" Used in data warehouses, BI tools.</p>
+    </div>
+  </div>
+
+  <!-- T4 -->
+  <div class="topic" id="t4">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">04</span>
+      <span class="topic-title">3-Tier Architecture (External, Conceptual, Internal)</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>DBMS uses a <strong>3-level architecture</strong> (also called ANSI/SPARC model) to separate what users see from how data is actually stored.</p>
+      <div class="analogy">Think of a restaurant: the <em>menu</em> (what customers see) is the external level. The <em>recipes and kitchen workflow</em> is the conceptual level. The actual <em>storage of ingredients in the pantry</em> is the internal level. Customers don't need to know how the pantry is organised!</div>
+      <table class="t-table">
+        <tr><th>Level</th><th>Also Called</th><th>What it represents</th></tr>
+        <tr><td><strong>External Level</strong></td><td>View Level / User Level</td><td>What individual users see — their customised view of the data</td></tr>
+        <tr><td><strong>Conceptual Level</strong></td><td>Logical Level</td><td>The complete logical structure of the whole database (tables, relationships) — no physical storage details</td></tr>
+        <tr><td><strong>Internal Level</strong></td><td>Physical Level</td><td>How data is actually stored on disk — indexes, file formats, storage blocks</td></tr>
+      </table>
+      <p>This separation allows changes at one level without affecting others — that's called <strong>Data Independence</strong>.</p>
+    </div>
+  </div>
+
+  <!-- T5 -->
+  <div class="topic" id="t5">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">05</span>
+      <span class="topic-title">Schema vs Instance</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Schema</strong> is the blueprint/design of the database — the structure. It defines what tables exist, what columns they have, what types those columns are. It rarely changes.<br><strong>Instance</strong> is the actual data in the database at a specific moment in time. It changes every time you insert, update, or delete data.</p>
+      <div class="analogy">Schema = the blueprint of a house (rooms, doors, walls). Instance = the actual furniture, people, and stuff inside the house right now. The blueprint stays the same, but what's inside keeps changing.</div>
+      <table class="t-table">
+        <tr><th></th><th>Schema</th><th>Instance</th></tr>
+        <tr><td>What is it?</td><td>Structure / design</td><td>Actual data at a point in time</td></tr>
+        <tr><td>Changes?</td><td>Rarely</td><td>Frequently</td></tr>
+        <tr><td>Also called</td><td>Intension</td><td>Extension</td></tr>
+        <tr><td>Example</td><td>Table "Students" with columns (RollNo, Name, Age)</td><td>Row: (101, "Priya", 16)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- T6 -->
+  <div class="topic" id="t6">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">06</span>
+      <span class="topic-title">Data Independence (Logical & Physical)</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Data Independence</strong> means you can change one level of the database without having to change other levels. It's one of the biggest advantages of using a DBMS.</p>
+      <ul class="points">
+        <li><strong>Physical Data Independence:</strong> You can change how data is stored on disk (e.g., switch from one file format to another, add indexes, move data to SSD) without changing the logical schema or user views. This is <em>easier to achieve</em>.</li>
+        <li><strong>Logical Data Independence:</strong> You can change the logical/conceptual schema (e.g., add a new column to a table, merge two tables) without changing the external views that users see. This is <em>harder to achieve</em>.</li>
+      </ul>
+      <div class="analogy">Physical independence = change the filing cabinet brand without changing the folder system. Logical independence = reorganise the folder system without changing what staff see on their computer screens.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ CHAPTER 2 ═══════════════════════════════ -->
+  <div class="section-chapter">Chapter 2 — ER Model & Relational Model</div>
+
+  <!-- T7 -->
+  <div class="topic" id="t7">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num orange">07</span>
+      <span class="topic-title">ER Model (Entity-Relationship Model)</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>The <strong>ER Model</strong> is a way to visually design a database before building it. It uses a diagram called an <strong>ER Diagram</strong> to show what data we'll store and how different pieces of data relate to each other.</p>
+      <div class="analogy orange">It's like drawing a map of your app before coding it. If you're building a school app, you'd draw boxes for "Student", "Teacher", "Subject" and lines showing how they connect — "Student ENROLLED IN Subject".</div>
+      <h4 class="orange">Main Components</h4>
+      <ul class="points">
+        <li class="orange"><strong>Entity</strong> → A real-world thing (e.g., Student, Book, Order)</li>
+        <li class="orange"><strong>Attribute</strong> → A property of an entity (e.g., Student has Name, Age, RollNo)</li>
+        <li class="orange"><strong>Relationship</strong> → Connection between entities (e.g., Student "TAKES" Course)</li>
+      </ul>
+      <p>In an ER diagram: Rectangles = Entities, Ellipses = Attributes, Diamonds = Relationships, Lines = Connections.</p>
+    </div>
+  </div>
+
+  <!-- T8 -->
+  <div class="topic" id="t8">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num orange">08</span>
+      <span class="topic-title">Entity, Attribute & Relationship Types</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <h4 class="orange">Types of Attributes</h4>
+      <table class="t-table">
+        <tr><th>Type</th><th>Meaning</th><th>Example</th></tr>
+        <tr><td><strong>Simple</strong></td><td>Cannot be broken down further</td><td>Age, RollNo</td></tr>
+        <tr><td><strong>Composite</strong></td><td>Can be split into sub-attributes</td><td>Full Name → First Name + Last Name</td></tr>
+        <tr><td><strong>Single-Valued</strong></td><td>Holds only one value</td><td>Date of Birth</td></tr>
+        <tr><td><strong>Multi-Valued</strong></td><td>Can hold multiple values</td><td>Phone Numbers (many phones)</td></tr>
+        <tr><td><strong>Derived</strong></td><td>Calculated from other attributes</td><td>Age (derived from DOB)</td></tr>
+        <tr><td><strong>Key Attribute</strong></td><td>Uniquely identifies an entity</td><td>Roll Number, Aadhar ID</td></tr>
+        <tr><td><strong>Null Attribute</strong></td><td>Can have no value</td><td>Middle Name</td></tr>
+      </table>
+      <h4 class="orange">Types of Relationships</h4>
+      <ul class="points">
+        <li class="orange"><strong>Unary:</strong> Entity relates to itself (Employee MANAGES Employee)</li>
+        <li class="orange"><strong>Binary:</strong> Between two entities — most common (Student TAKES Course)</li>
+        <li class="orange"><strong>Ternary:</strong> Between three entities (Doctor PRESCRIBES Medicine TO Patient)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- T9 -->
+  <div class="topic" id="t9">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num orange">09</span>
+      <span class="topic-title">Strong vs Weak Entity</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>Strong Entity</strong> has its own unique identifier (primary key) and can exist on its own.<br>A <strong>Weak Entity</strong> does NOT have its own unique key — it depends on another entity to be identified.</p>
+      <div class="analogy orange">Strong entity = a person who has their own Aadhar card and can exist independently. Weak entity = a dependent child in an insurance policy — the child's record only makes sense in the context of the policyholder (parent).</div>
+      <table class="t-table">
+        <tr><th></th><th>Strong Entity</th><th>Weak Entity</th></tr>
+        <tr><td>Own Key?</td><td>Yes (Primary Key)</td><td>No (only Partial Key / Discriminator)</td></tr>
+        <tr><td>Depends on?</td><td>Nobody</td><td>Identifying Entity (Owner)</td></tr>
+        <tr><td>Relationship</td><td>Regular</td><td>Identifying Relationship (double diamond)</td></tr>
+        <tr><td>ER Symbol</td><td>Single rectangle</td><td>Double rectangle</td></tr>
+        <tr><td>Example</td><td>Employee (EmpID)</td><td>Dependent (DependentName + EmpID)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- T10 -->
+  <div class="topic" id="t10">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num orange">10</span>
+      <span class="topic-title">Cardinality & Participation Constraints</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Cardinality</strong> tells us how many instances of one entity can be related to instances of another.</p>
+      <table class="t-table">
+        <tr><th>Cardinality</th><th>Meaning</th><th>Example</th></tr>
+        <tr><td><strong>1:1 (One-to-One)</strong></td><td>One A relates to exactly one B</td><td>One person has one passport</td></tr>
+        <tr><td><strong>1:N (One-to-Many)</strong></td><td>One A relates to many B's</td><td>One teacher teaches many students</td></tr>
+        <tr><td><strong>M:N (Many-to-Many)</strong></td><td>Many A's relate to many B's</td><td>Students take many courses; courses have many students</td></tr>
+      </table>
+      <h4 class="orange">Participation Constraints</h4>
+      <p>This tells us whether every entity MUST participate in a relationship, or if it's optional.</p>
+      <ul class="points">
+        <li class="orange"><strong>Total Participation (mandatory):</strong> Every entity MUST be in the relationship. Shown as double line in ER diagram. Example: Every employee MUST work in a department.</li>
+        <li class="orange"><strong>Partial Participation (optional):</strong> Some entities may not participate. Shown as single line. Example: Some employees MAY manage a project (not all managers).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- T11 -->
+  <div class="topic" id="t11">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num orange">11</span>
+      <span class="topic-title">ER to Relational Mapping</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>Once we design an ER diagram, we convert it into actual database tables. Here are the rules:</p>
+      <ul class="points">
+        <li class="orange"><strong>Strong Entity</strong> → becomes a table. Its attributes become columns. Primary key becomes the table's PK.</li>
+        <li class="orange"><strong>Weak Entity</strong> → becomes a table with its partial key + the owner's PK as combined primary key.</li>
+        <li class="orange"><strong>1:1 Relationship</strong> → Add the PK of one entity as a Foreign Key in the other.</li>
+        <li class="orange"><strong>1:N Relationship</strong> → Add the PK of the "1-side" entity as a FK in the "N-side" table.</li>
+        <li class="orange"><strong>M:N Relationship</strong> → Create a new junction/bridge table with the PKs of both entities.</li>
+        <li class="orange"><strong>Multi-valued Attribute</strong> → Create a separate table for it.</li>
+      </ul>
+      <div class="analogy orange">M:N is like a "friend of a friend" situation. Students ↔ Courses: we create an "Enrolment" table that links student IDs with course IDs.</div>
+    </div>
+  </div>
+
+  <!-- T12 -->
+  <div class="topic" id="t12">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num orange">12</span>
+      <span class="topic-title">Relational Model — Tuple, Attribute, Domain, Degree, Cardinality</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>The <strong>Relational Model</strong> organises data in tables (called <strong>relations</strong>). Here's the vocabulary:</p>
+      <table class="t-table">
+        <tr><th>Term</th><th>Simple Meaning</th><th>Table Equivalent</th></tr>
+        <tr><td><strong>Relation</strong></td><td>The whole table</td><td>Student table</td></tr>
+        <tr><td><strong>Tuple</strong></td><td>One row of data</td><td>One student's record</td></tr>
+        <tr><td><strong>Attribute</strong></td><td>One column</td><td>Name, Age, RollNo</td></tr>
+        <tr><td><strong>Domain</strong></td><td>Allowed set of values for an attribute</td><td>Age: positive integers only</td></tr>
+        <tr><td><strong>Degree</strong></td><td>Number of columns (attributes)</td><td>If 4 columns → Degree = 4</td></tr>
+        <tr><td><strong>Cardinality</strong></td><td>Number of rows (tuples)</td><td>If 300 students → Cardinality = 300</td></tr>
+      </table>
+      <div class="analogy orange">A relation is like a spreadsheet. Each row is a tuple (one data record). Each column is an attribute. The total columns = degree. Total rows = cardinality.</div>
+    </div>
+  </div>
+
+  <!-- T13 -->
+  <div class="topic" id="t13">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num orange">13</span>
+      <span class="topic-title">Keys — Super, Candidate, Primary, Alternate, Foreign, Composite</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>Keys are used to uniquely identify rows and link tables together. This is one of the most important topics!</p>
+      <table class="t-table">
+        <tr><th>Key Type</th><th>Definition</th><th>Example</th></tr>
+        <tr><td><strong>Super Key</strong></td><td>Any set of attributes that uniquely identifies a row (may have extras)</td><td>{RollNo}, {RollNo, Name}, {RollNo, Name, Age} — all super keys</td></tr>
+        <tr><td><strong>Candidate Key</strong></td><td>Minimal super key — no extra attributes</td><td>{RollNo}, {Email} — both uniquely identify a student</td></tr>
+        <tr><td><strong>Primary Key (PK)</strong></td><td>The ONE candidate key chosen as the main identifier. Cannot be NULL.</td><td>RollNo chosen as PK</td></tr>
+        <tr><td><strong>Alternate Key</strong></td><td>Candidate keys NOT chosen as PK</td><td>Email (if RollNo is PK, Email is alternate)</td></tr>
+        <tr><td><strong>Foreign Key (FK)</strong></td><td>A column in one table that references the PK of another table — creates a link</td><td>Order table has CustomerID (FK → Customer table's PK)</td></tr>
+        <tr><td><strong>Composite Key</strong></td><td>A key made of TWO or more columns together</td><td>(StudentID + CourseID) in Enrolment table</td></tr>
+      </table>
+      <div class="analogy orange">Super key = your bag (anything with your student ID included). Candidate key = just your student ID card, or just your email — each alone can identify you. Primary key = you pick ONE of them (student ID). Foreign key = your student ID written in the library's book record — it links back to you.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ CHAPTER 3 ═══════════════════════════════ -->
+  <div class="section-chapter">Chapter 3 — Relational Algebra & SQL</div>
+
+  <!-- T14 -->
+  <div class="topic" id="t14">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num green">14</span>
+      <span class="topic-title">Relational Algebra — Select, Project, Union, Intersection, Join...</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Relational Algebra</strong> is a formal mathematical language for querying relational databases. SQL is basically based on it! Think of it as the "theory" behind SQL.</p>
+      <table class="t-table">
+        <tr><th>Operation</th><th>Symbol</th><th>What it does</th><th>SQL Equivalent</th></tr>
+        <tr><td><strong>Select (σ)</strong></td><td>σ</td><td>Filter rows based on condition</td><td>WHERE clause</td></tr>
+        <tr><td><strong>Project (π)</strong></td><td>π</td><td>Pick specific columns</td><td>SELECT columns</td></tr>
+        <tr><td><strong>Union (∪)</strong></td><td>∪</td><td>Combine rows from two tables (no duplicates)</td><td>UNION</td></tr>
+        <tr><td><strong>Intersection (∩)</strong></td><td>∩</td><td>Rows common to both tables</td><td>INTERSECT</td></tr>
+        <tr><td><strong>Difference (−)</strong></td><td>−</td><td>Rows in first table but NOT in second</td><td>EXCEPT / MINUS</td></tr>
+        <tr><td><strong>Cartesian Product (×)</strong></td><td>×</td><td>All possible combinations of rows from both tables</td><td>CROSS JOIN</td></tr>
+        <tr><td><strong>Join (⋈)</strong></td><td>⋈</td><td>Combine tables based on a matching condition</td><td>JOIN ... ON</td></tr>
+        <tr><td><strong>Rename (ρ)</strong></td><td>ρ</td><td>Rename a relation or attribute</td><td>AS (alias)</td></tr>
+      </table>
+      <div class="analogy green">σ (Select) = filter rows like a sieve. π (Project) = choose which columns to show, like choosing which columns to copy in Excel. Join = merge two Excel sheets based on a common column.</div>
+    </div>
+  </div>
+
+  <!-- T15 -->
+  <div class="topic" id="t15">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num green">15</span>
+      <span class="topic-title">SQL — DDL, DML, DCL, TCL</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>SQL (Structured Query Language)</strong> is the language used to talk to a relational database. It's divided into 4 categories based on what each command does:</p>
+      <table class="t-table">
+        <tr><th>Category</th><th>Full Name</th><th>Commands</th><th>What they do</th></tr>
+        <tr><td><strong>DDL</strong></td><td>Data Definition Language</td><td>CREATE, ALTER, DROP, TRUNCATE, RENAME</td><td>Define/modify the structure (schema) of the database</td></tr>
+        <tr><td><strong>DML</strong></td><td>Data Manipulation Language</td><td>SELECT, INSERT, UPDATE, DELETE</td><td>Work with actual data inside tables</td></tr>
+        <tr><td><strong>DCL</strong></td><td>Data Control Language</td><td>GRANT, REVOKE</td><td>Control who has permission to access what</td></tr>
+        <tr><td><strong>TCL</strong></td><td>Transaction Control Language</td><td>COMMIT, ROLLBACK, SAVEPOINT</td><td>Manage transactions — confirm or undo changes</td></tr>
+      </table>
+      <pre>-- DDL: Create a table
+CREATE TABLE Students (
+  RollNo INT PRIMARY KEY,
+  Name VARCHAR(50),
+  Age INT
+);
+
+-- DML: Insert data
+INSERT INTO Students VALUES (101, 'Priya', 16);
+
+-- DML: Update data
+UPDATE Students SET Age = 17 WHERE RollNo = 101;
+
+-- TCL: Save changes permanently
+COMMIT;</pre>
+    </div>
+  </div>
+
+  <!-- T16 -->
+  <div class="topic" id="t16">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num green">16</span>
+      <span class="topic-title">SQL Queries — SELECT, WHERE, GROUP BY, HAVING, ORDER BY</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>Here is the most important SQL query structure you'll ever learn. The order of clauses matters!</p>
+      <pre>SELECT column1, column2, AGG_FUNC(column3)
+FROM table_name
+WHERE condition              -- filter individual rows
+GROUP BY column1             -- group rows together
+HAVING group_condition       -- filter groups
+ORDER BY column1 ASC/DESC;  -- sort results</pre>
+      <table class="t-table">
+        <tr><th>Clause</th><th>What it does</th><th>Example</th></tr>
+        <tr><td><strong>SELECT</strong></td><td>Choose which columns to show</td><td>SELECT Name, Age</td></tr>
+        <tr><td><strong>FROM</strong></td><td>Which table to read from</td><td>FROM Students</td></tr>
+        <tr><td><strong>WHERE</strong></td><td>Filter rows BEFORE grouping</td><td>WHERE Age > 15</td></tr>
+        <tr><td><strong>GROUP BY</strong></td><td>Group rows that have the same value in a column</td><td>GROUP BY Department</td></tr>
+        <tr><td><strong>HAVING</strong></td><td>Filter groups AFTER grouping (like WHERE but for groups)</td><td>HAVING COUNT(*) > 5</td></tr>
+        <tr><td><strong>ORDER BY</strong></td><td>Sort the final result</td><td>ORDER BY Marks DESC</td></tr>
+      </table>
+      <div class="analogy green">WHERE = filter individual students before grouping. HAVING = after grouping students by class, filter classes where more than 30 students scored above 90. You can't use WHERE on aggregate results!</div>
+    </div>
+  </div>
+
+  <!-- T17 -->
+  <div class="topic" id="t17">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num green">17</span>
+      <span class="topic-title">Joins — Inner, Left, Right, Full Outer, Cross, Self</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Joins</strong> combine rows from two or more tables based on a related column. This is how we pull together linked data.</p>
+      <table class="t-table">
+        <tr><th>Join Type</th><th>What it returns</th><th>NULLs?</th></tr>
+        <tr><td><strong>INNER JOIN</strong></td><td>Only rows that match in BOTH tables</td><td>No NULLs — unmatched rows excluded</td></tr>
+        <tr><td><strong>LEFT JOIN</strong></td><td>All rows from LEFT table + matching rows from right (NULLs if no match)</td><td>Right side can be NULL</td></tr>
+        <tr><td><strong>RIGHT JOIN</strong></td><td>All rows from RIGHT table + matching rows from left</td><td>Left side can be NULL</td></tr>
+        <tr><td><strong>FULL OUTER JOIN</strong></td><td>All rows from BOTH tables (NULLs where no match)</td><td>Both sides can be NULL</td></tr>
+        <tr><td><strong>CROSS JOIN</strong></td><td>Every row of table A × every row of table B (Cartesian product)</td><td>No condition — all combinations</td></tr>
+        <tr><td><strong>SELF JOIN</strong></td><td>A table joined with itself</td><td>Used for hierarchical data</td></tr>
+      </table>
+      <pre>-- INNER JOIN: Show student names with their course names
+SELECT S.Name, C.CourseName
+FROM Students S
+INNER JOIN Enrolment E ON S.RollNo = E.RollNo
+INNER JOIN Courses C ON E.CourseID = C.CourseID;
+
+-- SELF JOIN: Find employees and their managers (same table!)
+SELECT E.Name AS Employee, M.Name AS Manager
+FROM Employees E
+LEFT JOIN Employees M ON E.ManagerID = M.EmpID;</pre>
+      <div class="analogy green">INNER JOIN = only the Venn diagram overlap. LEFT JOIN = full left circle + the overlap. FULL OUTER = both full circles. CROSS JOIN = every student paired with every course — even if they're not enrolled.</div>
+    </div>
+  </div>
+
+  <!-- T18 -->
+  <div class="topic" id="t18">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num green">18</span>
+      <span class="topic-title">Nested Queries / Subqueries</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>subquery</strong> is a query written inside another query. The inner query runs first and provides results to the outer query.</p>
+      <div class="analogy green">Like asking: "Give me a list of students who scored more than the average mark." You first need to find the average (inner query), then use it to filter students (outer query).</div>
+      <pre>-- Find students who scored more than the average
+SELECT Name, Marks
+FROM Students
+WHERE Marks > (SELECT AVG(Marks) FROM Students);
+
+-- Find students enrolled in the 'DBMS' course
+SELECT Name FROM Students
+WHERE RollNo IN (
+  SELECT RollNo FROM Enrolment
+  WHERE CourseID = (SELECT CourseID FROM Courses WHERE CourseName = 'DBMS')
+);</pre>
+      <p>Subqueries can appear in: <code>WHERE</code>, <code>FROM</code> (as derived table), or <code>SELECT</code> clause.</p>
+    </div>
+  </div>
+
+  <!-- T19 -->
+  <div class="topic" id="t19">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num green">19</span>
+      <span class="topic-title">Correlated Subqueries</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>correlated subquery</strong> is a subquery that references a column from the outer query. This means the inner query runs ONCE FOR EACH ROW of the outer query — so it's slower but more powerful.</p>
+      <div class="analogy green">Regular subquery = you calculate the class average once, then check every student. Correlated subquery = for each student, you check if their mark is higher than the average of their OWN specific class.</div>
+      <pre>-- For each student, check if their marks are above their department's average
+SELECT Name, Department, Marks
+FROM Students S_outer
+WHERE Marks > (
+  SELECT AVG(Marks)
+  FROM Students S_inner
+  WHERE S_inner.Department = S_outer.Department  -- references outer query!
+);</pre>
+      <p>The inner query uses <code>S_outer.Department</code> — it changes for every row of the outer query. That's what makes it <em>correlated</em>.</p>
+    </div>
+  </div>
+
+  <!-- T20 -->
+  <div class="topic" id="t20">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num green">20</span>
+      <span class="topic-title">Aggregate Functions (COUNT, SUM, AVG, MIN, MAX)</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Aggregate functions</strong> perform calculations on a group of rows and return a single value.</p>
+      <table class="t-table">
+        <tr><th>Function</th><th>What it does</th><th>Example</th></tr>
+        <tr><td><strong>COUNT(*)</strong></td><td>Counts number of rows</td><td>COUNT(*) → 300 students</td></tr>
+        <tr><td><strong>COUNT(col)</strong></td><td>Counts non-NULL values in a column</td><td>COUNT(Email) → 295 (5 had no email)</td></tr>
+        <tr><td><strong>SUM(col)</strong></td><td>Adds up all values</td><td>SUM(Salary) → total payroll</td></tr>
+        <tr><td><strong>AVG(col)</strong></td><td>Calculates the average</td><td>AVG(Marks) → 72.5</td></tr>
+        <tr><td><strong>MIN(col)</strong></td><td>Returns the smallest value</td><td>MIN(Age) → 15</td></tr>
+        <tr><td><strong>MAX(col)</strong></td><td>Returns the largest value</td><td>MAX(Salary) → 150000</td></tr>
+      </table>
+      <pre>-- Count students per department, show only depts with more than 50 students
+SELECT Department, COUNT(*) AS StudentCount, AVG(Marks) AS AvgMarks
+FROM Students
+GROUP BY Department
+HAVING COUNT(*) > 50
+ORDER BY AvgMarks DESC;</pre>
+    </div>
+  </div>
+
+  <!-- T21 -->
+  <div class="topic" id="t21">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num green">21</span>
+      <span class="topic-title">NULL Handling in SQL</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>NULL</strong> means "no value" or "unknown" — it's NOT the same as 0, empty string, or false. NULL is special and has tricky rules.</p>
+      <ul class="points">
+        <li class="green">You CANNOT use <code>=</code> to check for NULL. Use <code>IS NULL</code> or <code>IS NOT NULL</code></li>
+        <li class="green">Any arithmetic with NULL gives NULL (e.g., 5 + NULL = NULL)</li>
+        <li class="green">Any comparison with NULL gives UNKNOWN (e.g., NULL = NULL is NOT true — it's UNKNOWN!)</li>
+        <li class="green">COUNT(*) counts all rows including NULLs, but COUNT(column) ignores NULLs</li>
+        <li class="green">AVG, SUM, MIN, MAX all ignore NULLs</li>
+      </ul>
+      <pre>-- WRONG way to check NULL:
+WHERE Email = NULL  -- This never works!
+
+-- CORRECT way:
+WHERE Email IS NULL
+WHERE Email IS NOT NULL
+
+-- COALESCE: Return first non-NULL value
+SELECT Name, COALESCE(Phone, 'No Phone') AS Contact FROM Students;
+
+-- NULLIF: Returns NULL if two values are equal
+SELECT NULLIF(Score, 0) FROM Results; -- makes 0 become NULL</pre>
+    </div>
+  </div>
+
+  <!-- T22 -->
+  <div class="topic" id="t22">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num green">22</span>
+      <span class="topic-title">Views</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>View</strong> is a virtual table — it's not stored physically, but it shows the result of a saved SQL query. Every time you access the view, the query runs fresh.</p>
+      <div class="analogy green">Think of a view like a saved search on YouTube. It's not a new video — it's just a shortcut that runs a query and shows you the result. The actual videos (data) live in the real tables.</div>
+      <ul class="points">
+        <li class="green"><strong>Simplicity:</strong> Hide complex queries behind a simple view name</li>
+        <li class="green"><strong>Security:</strong> Show only certain columns to certain users (hide salary, hide passwords)</li>
+        <li class="green"><strong>Reusability:</strong> Write a complex query once, reuse it everywhere as a view</li>
+      </ul>
+      <pre>-- Create a view showing only student names and marks (hiding personal info)
+CREATE VIEW StudentMarks AS
+SELECT Name, Department, Marks
+FROM Students;
+
+-- Use the view just like a table
+SELECT * FROM StudentMarks WHERE Marks > 80;
+
+-- Drop the view
+DROP VIEW StudentMarks;</pre>
+    </div>
+  </div>
+
+  <!-- T23 -->
+  <div class="topic" id="t23">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num green">23</span>
+      <span class="topic-title">Stored Procedures & Functions</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>Stored Procedure</strong> is a saved block of SQL code that you can call by name — like a function in programming. A <strong>Function</strong> (UDF - User Defined Function) is similar but must return a value and can be used inside queries.</p>
+      <table class="t-table">
+        <tr><th></th><th>Stored Procedure</th><th>Function</th></tr>
+        <tr><td>Returns</td><td>May return 0 or multiple values</td><td>Must return exactly 1 value</td></tr>
+        <tr><td>Call in query?</td><td>No (call with EXEC/CALL)</td><td>Yes (use inside SELECT, WHERE)</td></tr>
+        <tr><td>Error handling</td><td>Supported</td><td>Limited</td></tr>
+        <tr><td>DML inside?</td><td>Yes</td><td>Usually read-only</td></tr>
+      </table>
+      <pre>-- Stored Procedure: Get all students in a department
+CREATE PROCEDURE GetStudentsByDept(IN dept VARCHAR(50))
+BEGIN
+  SELECT Name, Marks FROM Students WHERE Department = dept;
+END;
+
+-- Call it
+CALL GetStudentsByDept('Computer Science');
+
+-- Function: Calculate grade from marks
+CREATE FUNCTION GetGrade(marks INT) RETURNS CHAR(1)
+BEGIN
+  IF marks >= 90 THEN RETURN 'A';
+  ELSEIF marks >= 75 THEN RETURN 'B';
+  ELSE RETURN 'C';
+  END IF;
+END;</pre>
+    </div>
+  </div>
+
+  <!-- T24 -->
+  <div class="topic" id="t24">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num green">24</span>
+      <span class="topic-title">Triggers</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>Trigger</strong> is an automatic action that fires when something happens to a table — like INSERT, UPDATE, or DELETE. You don't call triggers — they fire automatically!</p>
+      <div class="analogy green">A trigger is like a motion sensor alarm. You don't manually activate it — it fires automatically when something moves (changes in the table).</div>
+      <ul class="points">
+        <li class="green"><strong>BEFORE trigger:</strong> Runs BEFORE the operation (e.g., validate data before insert)</li>
+        <li class="green"><strong>AFTER trigger:</strong> Runs AFTER the operation (e.g., log the change after update)</li>
+      </ul>
+      <pre>-- Trigger: Automatically log when a student record is deleted
+CREATE TRIGGER LogDelete
+AFTER DELETE ON Students
+FOR EACH ROW
+BEGIN
+  INSERT INTO AuditLog (Action, RollNo, DeletedAt)
+  VALUES ('DELETE', OLD.RollNo, NOW());
+END;</pre>
+      <p>Use cases: Audit logging, enforcing business rules, automatic calculations, sending alerts.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ CHAPTER 4 ═══════════════════════════════ -->
+  <div class="section-chapter">Chapter 4 — Indexes & Storage</div>
+
+  <!-- T25 -->
+  <div class="topic" id="t25">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num pink">25</span>
+      <span class="topic-title">Indexes — Dense, Sparse, Clustered, Non-Clustered</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>An <strong>Index</strong> is like a book's index at the back — instead of reading every page to find "photosynthesis", you jump to page 87. Similarly, a database index helps find rows quickly without scanning every row.</p>
+      <div class="analogy pink">Without an index = reading a 1000-page book page by page. With an index = flip to page 87 directly.</div>
+      <table class="t-table">
+        <tr><th>Type</th><th>Definition</th></tr>
+        <tr><td><strong>Dense Index</strong></td><td>One index entry for EVERY record in the table. Faster search but takes more space.</td></tr>
+        <tr><td><strong>Sparse Index</strong></td><td>Index entries only for SOME records (usually first record per block). Less space, slightly slower.</td></tr>
+        <tr><td><strong>Clustered Index</strong></td><td>The actual data rows are sorted and stored in the same order as the index. Only ONE per table. (Like a dictionary — words ARE in alphabetical order.)</td></tr>
+        <tr><td><strong>Non-Clustered Index</strong></td><td>A separate structure pointing to data rows. Data is NOT physically sorted by this index. Multiple allowed per table. (Like a book index pointing to page numbers.)</td></tr>
+        <tr><td><strong>Primary Index</strong></td><td>Built on a key field. Data file is ordered by the key.</td></tr>
+        <tr><td><strong>Secondary Index</strong></td><td>Built on a non-key field. Useful for queries on non-key columns.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- T26 -->
+  <div class="topic" id="t26">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num pink">26</span>
+      <span class="topic-title">B-Tree & B+ Tree Indexing</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>Most databases use <strong>B+ Trees</strong> (B-plus trees) for indexing. They are tree-shaped data structures that keep data sorted and allow fast searching, insertion, and deletion.</p>
+      <div class="analogy pink">Imagine a hierarchy: first you narrow it down to a continent, then a country, then a city, then a street, then a house. That's how a B+ Tree finds a value quickly — by navigating levels.</div>
+      <table class="t-table">
+        <tr><th></th><th>B-Tree</th><th>B+ Tree</th></tr>
+        <tr><td>Data in</td><td>All nodes (internal + leaf)</td><td>Only LEAF nodes</td></tr>
+        <tr><td>Leaf linking</td><td>No</td><td>Yes — leaves are linked as a linked list</td></tr>
+        <tr><td>Range queries</td><td>Slower</td><td>Very fast (just traverse the leaf chain)</td></tr>
+        <tr><td>Used in</td><td>Less common</td><td>Most RDBMS — MySQL, PostgreSQL, Oracle</td></tr>
+      </table>
+      <p>B+ Trees guarantee <strong>O(log n)</strong> search time. All leaf nodes are at the same level (balanced). Internal nodes only store keys for navigation; actual data pointers are at leaves.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ CHAPTER 5 ═══════════════════════════════ -->
+  <div class="section-chapter">Chapter 5 — Functional Dependencies & Normalization</div>
+
+  <!-- T27 -->
+  <div class="topic" id="t27">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">27</span>
+      <span class="topic-title">Functional Dependency</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>Functional Dependency (FD)</strong> means: if you know the value of attribute A, you can always determine the value of attribute B. Written as <code>A → B</code> (A determines B, or B is functionally dependent on A).</p>
+      <div class="analogy">If you know a student's Roll Number, you can always find their Name. So: RollNo → Name. This is a functional dependency. But Name → RollNo is NOT an FD (two students can have the same name).</div>
+      <ul class="points">
+        <li><strong>Trivial FD:</strong> A → B where B is a subset of A. Example: {RollNo, Name} → Name. Always true.</li>
+        <li><strong>Non-trivial FD:</strong> A → B where B is NOT a subset of A. These are the meaningful ones.</li>
+        <li><strong>Full FD:</strong> B depends on the ENTIRE set A, not just part of it.</li>
+        <li><strong>Partial FD:</strong> B depends on only PART of a composite key A. (Problematic — leads to 2NF violation)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- T28 -->
+  <div class="topic" id="t28">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">28</span>
+      <span class="topic-title">Armstrong's Axioms</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Armstrong's Axioms</strong> are rules that let you derive ALL possible functional dependencies from a given set. They are sound (only produce valid FDs) and complete (can generate all FDs).</p>
+      <table class="t-table">
+        <tr><th>Axiom</th><th>Rule</th><th>Example</th></tr>
+        <tr><td><strong>Reflexivity</strong></td><td>If B ⊆ A, then A → B</td><td>{Name, Age} → Name (trivial)</td></tr>
+        <tr><td><strong>Augmentation</strong></td><td>If A → B, then AC → BC</td><td>If RollNo → Name, then {RollNo, Dept} → {Name, Dept}</td></tr>
+        <tr><td><strong>Transitivity</strong></td><td>If A → B and B → C, then A → C</td><td>If RollNo → DeptID and DeptID → DeptName, then RollNo → DeptName</td></tr>
+      </table>
+      <h4>Secondary Rules (derived from above):</h4>
+      <ul class="points">
+        <li><strong>Union:</strong> If A→B and A→C, then A→BC</li>
+        <li><strong>Decomposition:</strong> If A→BC, then A→B and A→C</li>
+        <li><strong>Pseudotransitivity:</strong> If A→B and CB→D, then CA→D</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- T29 -->
+  <div class="topic" id="t29">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">29</span>
+      <span class="topic-title">Closure of Attribute Set</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>The <strong>closure of an attribute set X</strong>, written as X⁺, is the set of ALL attributes that can be determined from X using the given functional dependencies.</p>
+      <div class="analogy">You start with some attributes. Keep applying the FD rules — every time you find a new attribute you can determine, add it to your set. Stop when you can't add anything new. That final set is the closure.</div>
+      <h4>Example:</h4>
+      <p>Given: FDs = {A→B, B→C, C→D}. Find closure of {A}.</p>
+      <pre>Start: {A}
+A → B  → add B:  {A, B}
+B → C  → add C:  {A, B, C}
+C → D  → add D:  {A, B, C, D}
+No more rules to apply.
+
+Closure of A = {A, B, C, D}</pre>
+      <p>If the closure of a set = all attributes in the relation → that set is a <strong>super key</strong>!</p>
+    </div>
+  </div>
+
+  <!-- T30 -->
+  <div class="topic" id="t30">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">30</span>
+      <span class="topic-title">Candidate Key Finding</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>Candidate Key</strong> is a minimal set of attributes whose closure = all attributes in the relation. To find all candidate keys:</p>
+      <ul class="points">
+        <li><strong>Step 1:</strong> Find which attributes NEVER appear on the right side of any FD — they MUST be in every candidate key (they can't be derived from anything).</li>
+        <li><strong>Step 2:</strong> Find which attributes appear ONLY on the right side — they can NEVER be part of a candidate key alone.</li>
+        <li><strong>Step 3:</strong> Try combinations of the must-include attributes and check their closures.</li>
+        <li><strong>Step 4:</strong> If closure = all attributes → it's a super key. If it's also minimal → it's a candidate key.</li>
+      </ul>
+      <div class="analogy">Think of it as finding the smallest "key ring" that opens all locks (determines all attributes). Remove even one key from the ring and you can't open all locks anymore.</div>
+    </div>
+  </div>
+
+  <!-- T31 -->
+  <div class="topic" id="t31">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">31</span>
+      <span class="topic-title">Normalization — 1NF, 2NF, 3NF, BCNF</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Normalization</strong> is the process of organising a database to reduce redundancy (duplicate data) and ensure data integrity. We go through different "normal forms" — each one fixing a specific problem.</p>
+      <div class="analogy">Normalization is like cleaning your messy room: 1NF = throw away things with no fixed place. 2NF = put each type of thing in its own drawer. 3NF = don't let drawers depend on other drawers — only on the room's master organiser. BCNF = stricter version of 3NF.</div>
+      <table class="t-table">
+        <tr><th>Normal Form</th><th>Rule</th><th>Problem Fixed</th></tr>
+        <tr><td><strong>1NF</strong></td><td>No multi-valued or repeating group attributes. Every cell must have ONE atomic value. Each row must be unique.</td><td>Repeating groups, non-atomic values</td></tr>
+        <tr><td><strong>2NF</strong></td><td>Must be in 1NF + No PARTIAL DEPENDENCY (non-key attribute must depend on the FULL primary key, not part of it)</td><td>Partial dependencies — only matters if PK is composite</td></tr>
+        <tr><td><strong>3NF</strong></td><td>Must be in 2NF + No TRANSITIVE DEPENDENCY (non-key attribute must not depend on another non-key attribute)</td><td>Transitive dependencies</td></tr>
+        <tr><td><strong>BCNF</strong></td><td>Must be in 3NF + For every FD X→Y, X must be a super key</td><td>Cases where 3NF is still not clean enough</td></tr>
+      </table>
+      <p>Most practical database design aims for <strong>3NF or BCNF</strong>.</p>
+    </div>
+  </div>
+
+  <!-- T32 -->
+  <div class="topic" id="t32">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">32</span>
+      <span class="topic-title">Partial Dependency</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>Partial Dependency</strong> occurs when a non-key attribute depends on only PART of a composite primary key (not the full key). This violates 2NF.</p>
+      <div class="analogy">Imagine a table where PK is (StudentID, CourseID). If StudentName depends only on StudentID (not CourseID), that's a partial dependency — StudentName has nothing to do with CourseID!</div>
+      <pre>-- BAD TABLE (has partial dependency):
+Enrolment(StudentID, CourseID, StudentName, CourseName, Grade)
+-- PK = (StudentID, CourseID)
+-- StudentName depends only on StudentID → PARTIAL DEPENDENCY!
+-- CourseName depends only on CourseID  → PARTIAL DEPENDENCY!
+
+-- FIXED (2NF — split into three tables):
+Student(StudentID, StudentName)
+Course(CourseID, CourseName)
+Enrolment(StudentID, CourseID, Grade)</pre>
+    </div>
+  </div>
+
+  <!-- T33 -->
+  <div class="topic" id="t33">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">33</span>
+      <span class="topic-title">Transitive Dependency</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>Transitive Dependency</strong> occurs when a non-key attribute A determines another non-key attribute B. So the key → A → B (indirectly through A). This violates 3NF.</p>
+      <pre>-- BAD TABLE (has transitive dependency):
+Student(StudentID, Name, DeptID, DeptName, DeptLocation)
+-- PK = StudentID
+-- StudentID → DeptID (fine — direct)
+-- DeptID → DeptName (TRANSITIVE! DeptName depends on DeptID, not StudentID)
+-- DeptID → DeptLocation (TRANSITIVE!)
+
+-- FIXED (3NF):
+Student(StudentID, Name, DeptID)
+Department(DeptID, DeptName, DeptLocation)</pre>
+      <div class="analogy">Key → City → Country. You know the key gives you City. City gives you Country. Country is transitively dependent on Key — it should be in a separate table.</div>
+    </div>
+  </div>
+
+  <!-- T34 -->
+  <div class="topic" id="t34">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">34</span>
+      <span class="topic-title">Multivalued Dependency & 4NF</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>Multivalued Dependency (MVD)</strong> occurs when one attribute in a table uniquely determines a set of values of another attribute, independently of all other attributes. Written as A →→ B.</p>
+      <div class="analogy">A professor can teach multiple subjects AND has multiple phone numbers — these two facts (subjects, phone numbers) are completely independent of each other, but both depend on the professor. Storing them in one table causes redundant combinations.</div>
+      <pre>-- BAD TABLE:
+Professor(ProfName, Subject, Phone)
+-- ProfName →→ Subject (multivalued)
+-- ProfName →→ Phone (multivalued)
+-- This forces every subject-phone combination to be repeated!
+
+ProfName    Subject     Phone
+Dr. Kumar   DBMS        9876543210
+Dr. Kumar   DBMS        9123456789   ← duplicate subject just for new phone
+Dr. Kumar   OS          9876543210   ← duplicate phone just for new subject
+Dr. Kumar   OS          9123456789
+
+-- FIXED (4NF — split into two tables):
+ProfSubject(ProfName, Subject)
+ProfPhone(ProfName, Phone)</pre>
+      <p><strong>4NF:</strong> Must be in BCNF + no non-trivial multivalued dependencies.</p>
+    </div>
+  </div>
+
+  <!-- T35 -->
+  <div class="topic" id="t35">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num">35</span>
+      <span class="topic-title">Lossless Join & Dependency Preserving Decomposition</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>When we split (decompose) a table during normalisation, we need to make sure we don't lose information or lose the functional dependency rules.</p>
+      <ul class="points">
+        <li><strong>Lossless Join Decomposition:</strong> When you split a table into smaller tables, you should be able to JOIN them back and get the EXACT original table — no extra or missing rows. This is the most important property.</li>
+        <li><strong>Dependency Preserving Decomposition:</strong> All the original FDs should still be checkable within the new smaller tables, without needing to JOIN them back. If you must JOIN to check an FD, it's not dependency-preserving.</li>
+      </ul>
+      <div class="analogy">Lossless = cut a pizza and put it back together — you get the full pizza back, no piece is lost. Dependency preserving = every quality rule (FD) about the pizza can be checked without reassembling it — just by checking the individual slices.</div>
+      <p>Note: BCNF always gives lossless decomposition but may NOT preserve all dependencies. 3NF guarantees BOTH lossless join AND dependency preservation.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ CHAPTER 6 ═══════════════════════════════ -->
+  <div class="section-chapter">Chapter 6 — Transactions & Concurrency</div>
+
+  <!-- T36 -->
+  <div class="topic" id="t36">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num accent">36</span>
+      <span class="topic-title">Transactions</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>Transaction</strong> is a group of SQL operations that are treated as ONE unit of work. Either ALL operations succeed together, or NONE of them happen (rolled back).</p>
+      <div class="analogy">Bank transfer: You transfer ₹1000 from Account A to Account B. That involves: (1) Deduct ₹1000 from A, (2) Add ₹1000 to B. If step 1 succeeds but step 2 fails (server crash), you'd lose ₹1000! Transactions ensure both steps happen together or neither happens.</div>
+      <pre>START TRANSACTION;
+  UPDATE Accounts SET Balance = Balance - 1000 WHERE AccNo = 'A101';
+  UPDATE Accounts SET Balance = Balance + 1000 WHERE AccNo = 'B202';
+COMMIT;  -- Make changes permanent
+
+-- If anything goes wrong:
+ROLLBACK;  -- Undo everything back to the start</pre>
+    </div>
+  </div>
+
+  <!-- T37 -->
+  <div class="topic" id="t37">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num accent">37</span>
+      <span class="topic-title">ACID Properties</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>ACID is what makes transactions reliable. Every good transaction must follow all four properties:</p>
+      <table class="t-table">
+        <tr><th>Property</th><th>Meaning</th><th>Example</th></tr>
+        <tr><td><strong>Atomicity</strong></td><td>All or nothing — either ALL operations of a transaction succeed, or NONE do</td><td>If deduction succeeds but credit fails → rollback both</td></tr>
+        <tr><td><strong>Consistency</strong></td><td>Database must go from one valid state to another valid state — all rules/constraints must be satisfied</td><td>Total money before transfer = total money after transfer</td></tr>
+        <tr><td><strong>Isolation</strong></td><td>Concurrent transactions don't interfere with each other — each transaction runs as if it's alone</td><td>Two people booking the last seat simultaneously won't both get it</td></tr>
+        <tr><td><strong>Durability</strong></td><td>Once a transaction is committed, changes are PERMANENT — even if the system crashes</td><td>Your UPI payment confirmation means the money is gone for good</td></tr>
+      </table>
+      <div class="analogy">ACID is like a vending machine: it either gives you the snack AND takes the money (atomic), keeps inventory consistent, doesn't confuse two people's orders (isolated), and the snack is gone for good once dispensed (durable).</div>
+    </div>
+  </div>
+
+  <!-- T38 -->
+  <div class="topic" id="t38">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num accent">38</span>
+      <span class="topic-title">Transaction States</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A transaction goes through several states during its lifetime:</p>
+      <table class="t-table">
+        <tr><th>State</th><th>Meaning</th></tr>
+        <tr><td><strong>Active</strong></td><td>Transaction is currently executing (reading/writing)</td></tr>
+        <tr><td><strong>Partially Committed</strong></td><td>Last operation has been executed, but changes are not yet written to disk</td></tr>
+        <tr><td><strong>Committed</strong></td><td>All operations successful, changes are permanently saved to disk</td></tr>
+        <tr><td><strong>Failed</strong></td><td>An error occurred — transaction cannot proceed normally</td></tr>
+        <tr><td><strong>Aborted</strong></td><td>Transaction has been rolled back — database restored to state before the transaction started</td></tr>
+        <tr><td><strong>Terminated</strong></td><td>Transaction has ended (either committed or aborted)</td></tr>
+      </table>
+      <div class="analogy">Think of an exam: Active = writing the exam. Partially committed = finished writing, waiting for paper to be collected. Committed = marks entered in system. Failed = caught cheating. Aborted = paper cancelled. Terminated = result declared.</div>
+    </div>
+  </div>
+
+  <!-- T39 -->
+  <div class="topic" id="t39">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num accent">39</span>
+      <span class="topic-title">Concurrency Control</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Concurrency Control</strong> manages multiple transactions running at the same time so they don't interfere with each other and cause incorrect results. Without it, we get problems:</p>
+      <table class="t-table">
+        <tr><th>Problem</th><th>What happens</th><th>Example</th></tr>
+        <tr><td><strong>Lost Update</strong></td><td>Two transactions read the same value, both modify it — one update is overwritten by the other</td><td>Two agents book the same seat; last one wins, first booking lost</td></tr>
+        <tr><td><strong>Dirty Read</strong></td><td>Transaction reads data that another uncommitted transaction wrote (which may later be rolled back)</td><td>Reading a transferred amount before the bank confirms it</td></tr>
+        <tr><td><strong>Non-Repeatable Read</strong></td><td>A transaction reads a value twice but gets different results because another transaction changed it in between</td><td>Re-reading a product price that changed during your checkout</td></tr>
+        <tr><td><strong>Phantom Read</strong></td><td>A query returns different rows on re-execution because another transaction inserted/deleted rows in between</td><td>Counting seats, then getting a different count seconds later</td></tr>
+      </table>
+      <p>Solutions include: <strong>Locking</strong>, <strong>Timestamp Ordering</strong>, <strong>Optimistic Concurrency Control</strong>, and <strong>MVCC (Multiversion Concurrency Control)</strong>.</p>
+    </div>
+  </div>
+
+  <!-- T40 -->
+  <div class="topic" id="t40">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num accent">40</span>
+      <span class="topic-title">Serializability (Conflict & View)</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>schedule</strong> is the order in which operations from multiple concurrent transactions are executed. A schedule is <strong>serializable</strong> if it produces the same result as if the transactions ran one after another (serially) in some order.</p>
+      <ul class="points">
+        <li><strong>Conflict Serializability:</strong> Two operations CONFLICT if they are from different transactions, operate on the same data item, and at least one is a WRITE. A schedule is conflict serializable if you can swap non-conflicting operations to make it a serial schedule. We test this using a <strong>Precedence Graph</strong>.</li>
+        <li><strong>View Serializability:</strong> More general (less strict) than conflict. Checks if the initial reads, final writes, and which write each read sees — are all the same as some serial schedule. Harder to check but accepts more schedules.</li>
+      </ul>
+      <p>Every conflict serializable schedule is also view serializable, but not vice versa.</p>
+    </div>
+  </div>
+
+  <!-- T41 -->
+  <div class="topic" id="t41">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num accent">41</span>
+      <span class="topic-title">Precedence Graph / Conflict Graph</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>The <strong>Precedence Graph</strong> (also called Serialization Graph) is used to test if a schedule is conflict serializable.</p>
+      <h4>How to build it:</h4>
+      <ul class="points">
+        <li class="accent"><strong>Nodes</strong> = each transaction (T1, T2, T3...)</li>
+        <li class="accent">Draw a directed edge <strong>Ti → Tj</strong> if Ti does something BEFORE Tj on the SAME data item AND they conflict (at least one is a Write)</li>
+        <li class="accent">Check for <strong>Cycles</strong> in the graph</li>
+      </ul>
+      <div class="key-point">
+        <strong>If the precedence graph has NO cycle</strong> → Schedule is <strong>Conflict Serializable</strong> ✅<br>
+        <strong>If the precedence graph HAS a cycle</strong> → Schedule is <strong>NOT Conflict Serializable</strong> ❌
+      </div>
+      <div class="analogy">The graph is like a "who must come first" rule. If T1 must come before T2, and T2 must come before T1 — that's a cycle, a contradiction, and the schedule is not serializable.</div>
+    </div>
+  </div>
+
+  <!-- T42 -->
+  <div class="topic" id="t42">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num accent">42</span>
+      <span class="topic-title">Locking — Shared & Exclusive</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Locking</strong> is the most common concurrency control mechanism. Before accessing data, a transaction must acquire a lock on it.</p>
+      <table class="t-table">
+        <tr><th>Lock Type</th><th>Also Called</th><th>Who can hold it?</th><th>Used for?</th></tr>
+        <tr><td><strong>Shared Lock (S)</strong></td><td>Read Lock</td><td>Multiple transactions simultaneously</td><td>Reading data</td></tr>
+        <tr><td><strong>Exclusive Lock (X)</strong></td><td>Write Lock</td><td>Only ONE transaction at a time</td><td>Writing/modifying data</td></tr>
+      </table>
+      <h4>Lock Compatibility Table:</h4>
+      <table class="t-table">
+        <tr><th>Request →</th><th>Shared (S)</th><th>Exclusive (X)</th></tr>
+        <tr><td>Currently has <strong>S</strong></td><td>✅ Compatible (grant)</td><td>❌ Not compatible (wait)</td></tr>
+        <tr><td>Currently has <strong>X</strong></td><td>❌ Not compatible (wait)</td><td>❌ Not compatible (wait)</td></tr>
+      </table>
+      <div class="analogy">Shared lock = a library book that multiple people can read simultaneously. Exclusive lock = a single-user toilet — only one person at a time, no sharing!</div>
+    </div>
+  </div>
+
+  <!-- T43 -->
+  <div class="topic" id="t43">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num accent">43</span>
+      <span class="topic-title">Two-Phase Locking (2PL)</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Two-Phase Locking (2PL)</strong> is a protocol that guarantees conflict serializable schedules. A transaction must follow exactly two phases:</p>
+      <ul class="points">
+        <li class="accent"><strong>Phase 1 — Growing Phase:</strong> Transaction can only ACQUIRE locks, never release any. The transaction accumulates all the locks it needs.</li>
+        <li class="accent"><strong>Phase 2 — Shrinking Phase:</strong> Transaction can only RELEASE locks, never acquire new ones. Once a lock is released, the transaction enters this phase.</li>
+      </ul>
+      <div class="analogy">Like packing your bag for a trip: Phase 1 = keep picking up and adding things (locks). Phase 2 = once you take something out (release a lock), you can't add anything new. Only pack, then only unpack.</div>
+      <h4>Variants:</h4>
+      <ul class="points">
+        <li class="accent"><strong>Strict 2PL:</strong> All exclusive locks held until COMMIT/ABORT. Prevents cascading rollbacks.</li>
+        <li class="accent"><strong>Rigorous 2PL:</strong> ALL locks (shared + exclusive) held until COMMIT/ABORT. Strictest — but avoids all concurrency problems.</li>
+      </ul>
+      <p>2PL guarantees serializability BUT can cause <strong>deadlocks</strong>.</p>
+    </div>
+  </div>
+
+  <!-- T44 -->
+  <div class="topic" id="t44">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num accent">44</span>
+      <span class="topic-title">Deadlock in DBMS</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>A <strong>Deadlock</strong> occurs when two or more transactions are waiting for each other to release locks — and none of them can proceed. Everyone is stuck waiting!</p>
+      <div class="analogy">T1 is holding key to room A and wants room B. T2 is holding key to room B and wants room A. Both are waiting forever. Classic deadlock!</div>
+      <table class="t-table">
+        <tr><th>Approach</th><th>Strategy</th><th>How</th></tr>
+        <tr><td><strong>Prevention</strong></td><td>Don't let deadlocks form</td><td>Wait-Die / Wound-Wait schemes using timestamps</td></tr>
+        <tr><td><strong>Avoidance</strong></td><td>Check before granting locks</td><td>Banker's Algorithm (check if safe state)</td></tr>
+        <tr><td><strong>Detection</strong></td><td>Let deadlocks happen, then fix</td><td>Wait-for graph — detect cycle → abort one transaction (victim)</td></tr>
+        <tr><td><strong>Timeout</strong></td><td>Simple practical approach</td><td>If transaction waits too long → abort it</td></tr>
+      </table>
+      <p><strong>Wait-for graph:</strong> Draw edges T1 → T2 if T1 is waiting for a lock held by T2. If there's a cycle → deadlock detected.</p>
+    </div>
+  </div>
+
+  <!-- T45 -->
+  <div class="topic" id="t45">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num accent">45</span>
+      <span class="topic-title">Timestamp-Based Protocols</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>Instead of locks, <strong>Timestamp-Based Protocols</strong> use timestamps to decide the order of transactions. Each transaction gets a unique timestamp (TS) when it starts. Older timestamps = higher priority.</p>
+      <p>Each data item tracks two timestamps:</p>
+      <ul class="points">
+        <li class="accent"><strong>Read_TS(X):</strong> Timestamp of the most recent transaction that READ X</li>
+        <li class="accent"><strong>Write_TS(X):</strong> Timestamp of the most recent transaction that WROTE X</li>
+      </ul>
+      <h4>Thomas Write Rule:</h4>
+      <p>If a transaction tries to write a value that's "in the past" (already overwritten by a newer transaction), simply ignore that write rather than aborting. This allows more transactions to proceed.</p>
+      <div class="analogy">It's like newspaper delivery: the morning paper makes the previous day's paper irrelevant. If you're trying to deliver yesterday's news after today's already arrived, just throw it away — don't cause a conflict.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ CHAPTER 7 ═══════════════════════════════ -->
+  <div class="section-chapter">Chapter 7 — Recovery, Storage & Advanced Topics</div>
+
+  <!-- T46 -->
+  <div class="topic" id="t46">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num pink">46</span>
+      <span class="topic-title">Recovery — Log-Based, Checkpointing</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Recovery</strong> is the process of restoring the database to a correct state after a failure (system crash, power cut, disk failure, etc.).</p>
+      <h4 class="pink">Log-Based Recovery</h4>
+      <p>A <strong>log</strong> (also called a journal) is a file that records every operation before it happens. Each log entry looks like: <code>[Transaction_ID, Data_Item, Old_Value, New_Value]</code>. If a crash happens, we use this log to recover.</p>
+      <h4 class="pink">Two Strategies:</h4>
+      <ul class="points">
+        <li class="pink"><strong>Deferred Update (No-Undo / Redo):</strong> Changes are written to disk only AFTER the transaction commits. If it crashes before commit → just ignore the log (no undo needed). After commit → redo from log if not written.</li>
+        <li class="pink"><strong>Immediate Update (Undo/Redo):</strong> Changes may be written to disk during the transaction (before commit). If crash before commit → UNDO using old values. If crash after commit but before disk write → REDO using new values.</li>
+      </ul>
+      <h4 class="pink">Checkpointing</h4>
+      <p>A <strong>checkpoint</strong> is a snapshot of the database state saved periodically. During recovery, instead of going all the way back to the beginning of the log, we only go back to the last checkpoint. This makes recovery much faster.</p>
+    </div>
+  </div>
+
+  <!-- T47 -->
+  <div class="topic" id="t47">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num pink">47</span>
+      <span class="topic-title">Rollback & Undo/Redo Operations</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>After a failure, the recovery manager looks at the log and decides what to do with each transaction:</p>
+      <table class="t-table">
+        <tr><th>Operation</th><th>Applied to</th><th>What it does</th></tr>
+        <tr><td><strong>UNDO</strong></td><td>Transactions that STARTED but did NOT commit before crash</td><td>Reverse all their changes using old values from log — restore to state before they started</td></tr>
+        <tr><td><strong>REDO</strong></td><td>Transactions that COMMITTED before crash but changes may not have reached disk</td><td>Re-apply their changes using new values from log — make sure changes are permanent</td></tr>
+      </table>
+      <div class="analogy pink">UNDO = eraser — rub out the mistake. REDO = rewriter — rewrite what was lost. If you committed your homework but your notebook got wet → REDO (rewrite it). If you were halfway through and notebook got wet → UNDO (start fresh, ignore the wet pages).</div>
+      <p><strong>Cascading Rollback:</strong> If T1 reads data written by T2, and T2 fails → T1 must also be rolled back. This is why Strict 2PL is preferred — it prevents reading uncommitted data.</p>
+    </div>
+  </div>
+
+  <!-- T48 -->
+  <div class="topic" id="t48">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num pink">48</span>
+      <span class="topic-title">Hashing — Static & Dynamic</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Hashing</strong> is a technique to quickly find where data is stored. A <strong>hash function</strong> takes a key (like StudentID) and returns a "bucket number" (location) where the record is stored. This allows O(1) average access time!</p>
+      <div class="analogy pink">Imagine 10 lockers numbered 0–9. To find where to put item #47: 47 mod 10 = 7 → put it in locker 7. To find it later: same calculation → locker 7. No searching needed!</div>
+      <table class="t-table">
+        <tr><th></th><th>Static Hashing</th><th>Dynamic Hashing (Extendible)</th></tr>
+        <tr><td>Number of buckets</td><td>Fixed at the start</td><td>Grows/shrinks as needed</td></tr>
+        <tr><td>Problem</td><td>Overflow if too many records; wasted space if too few</td><td>More complex to implement</td></tr>
+        <tr><td>Collision handling</td><td>Overflow chaining / open addressing</td><td>Bucket splitting</td></tr>
+        <tr><td>Use case</td><td>When data size is known and fixed</td><td>When data size grows over time</td></tr>
+      </table>
+      <p><strong>Collision</strong> = two keys hash to the same bucket. Handled by chaining (linked list of records in the bucket).</p>
+    </div>
+  </div>
+
+  <!-- T49 -->
+  <div class="topic" id="t49">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num pink">49</span>
+      <span class="topic-title">File Organization — Heap, Sequential, Hash, Clustered</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>File Organization</strong> refers to how records are physically stored on disk. The choice affects how fast you can search, insert, and delete records.</p>
+      <table class="t-table">
+        <tr><th>Type</th><th>How records are stored</th><th>Best for</th><th>Search speed</th></tr>
+        <tr><td><strong>Heap (Unordered)</strong></td><td>Records stored in any order, new records go at the end</td><td>Bulk inserts, full table scans</td><td>O(n) — slow</td></tr>
+        <tr><td><strong>Sequential (Ordered)</strong></td><td>Records sorted by a key field</td><td>Range queries, binary search</td><td>O(log n) for key searches</td></tr>
+        <tr><td><strong>Hash</strong></td><td>Records placed using a hash function</td><td>Exact-match lookups</td><td>O(1) average</td></tr>
+        <tr><td><strong>Clustered</strong></td><td>Records with similar values stored together physically</td><td>Range queries on clustered key</td><td>Very fast for ranges</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- T50 -->
+  <div class="topic" id="t50">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num pink">50</span>
+      <span class="topic-title">Relational vs NoSQL Databases</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>Not all databases are tables! <strong>NoSQL</strong> ("Not Only SQL") databases use different data models and are designed for scalability, flexibility, and handling large unstructured data.</p>
+      <table class="t-table">
+        <tr><th>Feature</th><th>Relational (RDBMS)</th><th>NoSQL</th></tr>
+        <tr><td>Data Model</td><td>Tables with rows & columns</td><td>Documents, Key-Value, Graphs, Columns</td></tr>
+        <tr><td>Schema</td><td>Fixed, predefined schema</td><td>Flexible / Schema-less</td></tr>
+        <tr><td>ACID</td><td>Full ACID support</td><td>Often eventual consistency (BASE)</td></tr>
+        <tr><td>Scaling</td><td>Vertical (bigger server)</td><td>Horizontal (more servers)</td></tr>
+        <tr><td>Best for</td><td>Structured data, financial systems, ERP</td><td>Social media, real-time apps, big data</td></tr>
+        <tr><td>Examples</td><td>MySQL, PostgreSQL, Oracle</td><td>MongoDB, Redis, Cassandra, Neo4j</td></tr>
+        <tr><td>Query Language</td><td>SQL</td><td>Database-specific APIs</td></tr>
+      </table>
+      <h4 class="pink">4 Types of NoSQL Databases:</h4>
+      <ul class="points">
+        <li class="pink"><strong>Document Store (MongoDB):</strong> Data stored as JSON-like documents. Great for user profiles, catalogues.</li>
+        <li class="pink"><strong>Key-Value Store (Redis, DynamoDB):</strong> Simple key → value pairs. Lightning fast. Great for caching, sessions.</li>
+        <li class="pink"><strong>Column-Family (Cassandra, HBase):</strong> Data grouped by columns. Great for time-series, analytics.</li>
+        <li class="pink"><strong>Graph Database (Neo4j):</strong> Data as nodes and edges. Great for social networks, recommendation engines.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- T51 -->
+  <div class="topic" id="t51">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num pink">51</span>
+      <span class="topic-title">CAP Theorem</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>The <strong>CAP Theorem</strong> (Brewer's Theorem) states that a distributed database system can guarantee at most <strong>2 out of 3</strong> properties at the same time:</p>
+      <table class="t-table">
+        <tr><th>Property</th><th>Meaning</th></tr>
+        <tr><td><strong>C — Consistency</strong></td><td>Every read gets the most recent write — all nodes see the same data at the same time</td></tr>
+        <tr><td><strong>A — Availability</strong></td><td>Every request gets a response — the system is always up and responding (may not be the latest data)</td></tr>
+        <tr><td><strong>P — Partition Tolerance</strong></td><td>The system continues working even if some network connections between nodes fail (network partition)</td></tr>
+      </table>
+      <p>In reality, <strong>P (Partition Tolerance)</strong> is almost always required in distributed systems (networks WILL fail). So the real choice is between:</p>
+      <ul class="points">
+        <li class="pink"><strong>CP systems</strong> (Consistent + Partition Tolerant): Sacrifice availability. Return error if can't guarantee latest data. Example: HBase, MongoDB (configured), Zookeeper.</li>
+        <li class="pink"><strong>AP systems</strong> (Available + Partition Tolerant): Sacrifice strict consistency. Always respond but might be slightly stale. Example: Cassandra, DynamoDB, CouchDB.</li>
+      </ul>
+      <div class="analogy pink">WhatsApp during a server issue: Availability = you can still open the app. Consistency = you might see old messages. Partition Tolerance = works even with poor network. You can't have all three perfectly at once.</div>
+    </div>
+  </div>
+
+  <!-- T52 -->
+  <div class="topic" id="t52">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num pink">52</span>
+      <span class="topic-title">Denormalization</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p><strong>Denormalization</strong> is the intentional process of adding redundancy back into a database by combining tables — the opposite of normalization. Done to improve READ performance at the cost of some redundancy.</p>
+      <div class="analogy pink">Normalization = putting everything in separate, tidy boxes. Denormalization = keeping some duplicates to save time. Like writing your friend's phone number in multiple places (your phone, your notebook, your PC) so you can find it faster from wherever you are.</div>
+      <ul class="points">
+        <li class="pink"><strong>When to use:</strong> When read performance is critical and joins are too slow (e.g., reporting dashboards, OLAP, data warehouses)</li>
+        <li class="pink"><strong>Downside:</strong> Increases storage, data redundancy, and makes updates harder (must update multiple places)</li>
+        <li class="pink"><strong>Techniques:</strong> Pre-joining tables, storing derived/computed values, adding redundant columns</li>
+      </ul>
+      <p>OLAP / Data Warehouse systems often use <strong>Star Schema</strong> (denormalized) with one big Fact table surrounded by Dimension tables — prioritising fast reads over write efficiency.</p>
+    </div>
+  </div>
+
+  <!-- T53 -->
+  <div class="topic" id="t53">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num pink">53</span>
+      <span class="topic-title">Query Optimization & Query Processing</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>When you write an SQL query, the DBMS doesn't just run it blindly. It goes through several steps to find the <strong>most efficient way</strong> to execute it.</p>
+      <h4 class="pink">Query Processing Steps:</h4>
+      <ul class="points">
+        <li class="pink"><strong>1. Parsing & Translation:</strong> SQL query → internal representation (relational algebra expression)</li>
+        <li class="pink"><strong>2. Optimization:</strong> Find the cheapest execution plan (considering indexes, joins, data sizes)</li>
+        <li class="pink"><strong>3. Evaluation:</strong> Execute the chosen plan and return results</li>
+      </ul>
+      <h4 class="pink">What the Query Optimizer does:</h4>
+      <ul class="points">
+        <li class="pink">Choose which <strong>index to use</strong> (or whether to scan the full table)</li>
+        <li class="pink">Choose the best <strong>join algorithm</strong> (Nested Loop Join, Hash Join, Sort-Merge Join)</li>
+        <li class="pink">Choose the <strong>order of joins</strong> (joining smallest tables first reduces intermediate result size)</li>
+        <li class="pink">Apply <strong>selection and projection early</strong> (push WHERE conditions down the tree — do filters first)</li>
+      </ul>
+      <div class="analogy pink">Like a GPS app: you enter a destination (SQL query), the GPS calculates multiple routes (execution plans), picks the fastest one (optimizer), and drives you there (executes it).</div>
+    </div>
+  </div>
+
+  <!-- T54 -->
+  <div class="topic" id="t54">
+    <div class="topic-header" onclick="toggle(this)">
+      <span class="topic-num pink">54</span>
+      <span class="topic-title">Cost Estimation in Query Optimization</span>
+      <span class="topic-arrow">▶</span>
+    </div>
+    <div class="topic-body">
+      <p>The query optimizer chooses the cheapest plan by estimating the <strong>cost</strong> of different execution strategies. Cost is measured primarily in <strong>disk I/O</strong> (reading blocks from disk is slow).</p>
+      <h4 class="pink">Cost Factors:</h4>
+      <ul class="points">
+        <li class="pink"><strong>Number of disk block accesses</strong> — main cost driver</li>
+        <li class="pink"><strong>CPU time</strong> — processing, sorting, hashing</li>
+        <li class="pink"><strong>Memory usage</strong> — buffer pool size available</li>
+        <li class="pink"><strong>Network communication</strong> — in distributed databases</li>
+      </ul>
+      <h4 class="pink">Statistics Used for Estimation:</h4>
+      <table class="t-table">
+        <tr><th>Statistic</th><th>Meaning</th></tr>
+        <tr><td><strong>n_r</strong></td><td>Number of tuples (rows) in relation r</td></tr>
+        <tr><td><strong>b_r</strong></td><td>Number of disk blocks containing relation r</td></tr>
+        <tr><td><strong>l_r</strong></td><td>Size of each tuple in bytes</td></tr>
+        <tr><td><strong>f_r</strong></td><td>Blocking factor — tuples per block</td></tr>
+        <tr><td><strong>V(A, r)</strong></td><td>Number of distinct values of attribute A — used to estimate selectivity</td></tr>
+      </table>
+      <p><strong>Selectivity</strong> = what fraction of rows will a condition match? Lower selectivity = fewer rows returned = better to use an index. Higher selectivity = most rows match = full table scan might be better.</p>
+      <div class="analogy pink">If only 2 out of 10,000 students are named "Priya Sharma" — use the name index (very selective). If 9,000 of them are female — skip the gender index and just scan the whole table (not selective enough for an index to help).</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  DBMS Complete Guide · 54 Topics · Made Simple · For Students
+</footer>
+
+<script>
+  function toggle(header) {
+    const topic = header.parentElement;
+    topic.classList.toggle('open');
+  }
+
+  function toggleAll(open) {
+    document.querySelectorAll('.topic').forEach(t => {
+      open ? t.classList.add('open') : t.classList.remove('open');
+    });
+  }
+
+  // Smooth scroll for TOC links
+  document.querySelectorAll('.toc-grid a').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) {
+        target.classList.add('open');
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
